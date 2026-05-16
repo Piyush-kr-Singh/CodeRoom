@@ -392,6 +392,9 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
                 fontSize: 14,
                 wordWrap: "on",
                 scrollBeyondLastLine: false,
+                scrollbar: {
+                  alwaysConsumeMouseWheel: false
+                },
                 padding: { top: 18, bottom: 18 },
                 readOnly: session.accessLevel === "viewer"
               }}
