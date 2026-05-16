@@ -131,6 +131,22 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
     };
   }, []);
 
+  useEffect(() => {
+    if (!session.room.isOwner) {
+      return;
+    }
+
+    function handleOpenOwnerPanel() {
+      setOwnerPanelOpen(true);
+    }
+
+    window.addEventListener("codeshare:open-owner-panel", handleOpenOwnerPanel);
+
+    return () => {
+      window.removeEventListener("codeshare:open-owner-panel", handleOpenOwnerPanel);
+    };
+  }, [session.room.isOwner]);
+
   function syncEditorFromServer(nextCode: string, nextLanguage: SupportedLanguage) {
     updateLanguageState(nextLanguage);
 
@@ -355,11 +371,6 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
               <button type="button" onClick={() => copyText(code, "Copied!")} className="button-secondary px-4 py-2">
                 Copy Code
               </button>
-              {session.room.isOwner ? (
-                <button type="button" onClick={() => setOwnerPanelOpen(true)} className="button-primary px-4 py-2">
-                  Room settings
-                </button>
-              ) : null}
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">

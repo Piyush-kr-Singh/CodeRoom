@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: "CodeShare Room",
+  name: "CodeSyncUp",
   domain: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   apiUrl: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000",
-  title: "Anonymous Real-Time Code Sharing Tool | Public & Private Rooms",
+  title: "CodeSyncUp | Anonymous Real-Time Code Sharing Tool",
   description:
     "Share code instantly without login. Create private password-protected rooms with custom expiry and real-time collaboration.",
   roomLaunchPath: "/room/your-room-name",

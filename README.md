@@ -1,4 +1,4 @@
-# CodeShare Room
+# CodeSyncUp
 
 Production-oriented anonymous real-time code sharing platform built as a small monorepo:
 
