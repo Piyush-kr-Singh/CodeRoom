@@ -15,7 +15,7 @@
   <text x="100" y="41" fill="#DCE8F5" font-family="Space Grotesk, Arial, sans-serif" font-size="29" font-weight="700" letter-spacing="-0.04em">
     Code<tspan fill="#4FD1C5">Sync</tspan><tspan fill="#FF9B71">Up</tspan>
   </text>
-  <text x="100" y="61" fill="#8BA0B9" font-family="IBM Plex Mono, Menlo, monospace" font-size="11" letter-spacing="0.18em">
-    INSTANT COLLABORATION WITHOUT LOGIN WALLS
+  <text x="100" y="61" fill="#8BA0B9" font-family="IBM Plex Mono, Menlo, monospace" font-size="9.5" letter-spacing="0.16em">
+    INSTANT COLLABORATION
   </text>
 </svg>
