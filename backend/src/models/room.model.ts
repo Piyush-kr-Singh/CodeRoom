@@ -37,7 +37,11 @@ const roomSchema = new Schema(
     },
     code: {
       type: String,
-      required: true,
+      // Plaintext rooms intentionally start blank, so only nullish values should fail validation.
+      validate: {
+        validator: (value: string | null | undefined) => value !== null && value !== undefined,
+        message: "Path `code` is required."
+      },
       default: ""
     },
     language: {
@@ -71,6 +75,7 @@ roomSchema.index({ lastActivityAt: 1 });
 export type RoomDocument = InferSchemaType<typeof roomSchema> & {
   _id: { toString(): string };
   visibility: RoomVisibility;
+  code: string;
   language: string;
   createdAt: Date;
   updatedAt: Date;
