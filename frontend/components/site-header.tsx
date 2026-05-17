@@ -45,8 +45,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[rgba(8,16,24,0.72)] backdrop-blur-xl">
       <div className="container-shell flex items-center justify-between gap-6 py-4">
-        <Link href="/" className="font-display text-lg font-semibold tracking-wide">
-          CodeSyncUp
+        <Link href="/" className="shrink-0" aria-label={siteConfig.name}>
+          <img src="/brand/codesyncup-logo.svg" alt="CodeSyncUp" className="h-10 w-auto sm:h-11" />
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-[color:var(--muted)] md:flex">
           {navItems.map((item) => (

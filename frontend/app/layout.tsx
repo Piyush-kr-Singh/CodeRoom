@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
   metadataBase: new URL(siteConfig.domain),
+  icons: {
+    icon: [{ url: "/brand/codesyncup-icon.svg", type: "image/svg+xml" }],
+    shortcut: ["/brand/codesyncup-icon.svg"]
+  },
   openGraph: {
     title: siteConfig.title,
     description: siteConfig.description,
