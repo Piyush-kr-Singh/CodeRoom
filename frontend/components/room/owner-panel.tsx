@@ -35,14 +35,22 @@ export function OwnerPanel({ open, room, busy, onClose, onSave, onDelete }: Owne
     event.preventDefault();
     setError("");
 
-    if (visibility === "private" && password.length < 8) {
+    const normalizedPassword = password.trim();
+    const isSwitchingToPrivate = visibility === "private" && room.visibility !== "private";
+    const isUpdatingPassword = normalizedPassword.length > 0;
+
+    if (
+      visibility === "private" &&
+      (isSwitchingToPrivate || isUpdatingPassword) &&
+      normalizedPassword.length < 8
+    ) {
       setError("Use at least 8 characters when saving a private room.");
       return;
     }
 
     await onSave({
       visibility,
-      password: visibility === "private" ? password : undefined,
+      password: visibility === "private" && normalizedPassword ? normalizedPassword : undefined,
       expiryHours: Number(expiryHours),
       language
     });
@@ -52,13 +60,13 @@ export function OwnerPanel({ open, room, busy, onClose, onSave, onDelete }: Owne
     <AnimatePresence>
       {open ? (
         <motion.div
-          className="fixed inset-0 z-[65] flex justify-end bg-[rgba(2,7,12,0.6)] backdrop-blur-sm"
+          className="fixed inset-0 z-[65] flex justify-end overflow-y-auto bg-[rgba(2,7,12,0.6)] p-2 backdrop-blur-sm sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="glass-panel h-full w-full max-w-md p-6 shadow-panel"
+            className="glass-panel code-scrollbar ml-auto h-full w-full max-w-md overflow-y-auto rounded-[2rem] p-6 shadow-panel sm:h-auto sm:max-h-[calc(100dvh-2rem)]"
             initial={{ x: 32 }}
             animate={{ x: 0 }}
             exit={{ x: 32 }}
@@ -111,11 +119,12 @@ export function OwnerPanel({ open, room, busy, onClose, onSave, onDelete }: Owne
               </label>
               {visibility === "private" ? (
                 <label className="grid gap-2 text-sm">
-                  <span>Set new password</span>
+                  <span>{room.visibility === "private" ? "Set new password (optional)" : "Set password"}</span>
                   <input
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
+                    placeholder={room.visibility === "private" ? "Leave blank to keep current password" : undefined}
                     className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 outline-none"
                   />
                 </label>

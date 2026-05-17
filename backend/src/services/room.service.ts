@@ -65,15 +65,6 @@ export const updateRoomSchema = z
     password: z.string().min(8).max(120).optional(),
     expiryHours: z.coerce.number().positive(),
     language: z.enum(SUPPORTED_LANGUAGES)
-  })
-  .superRefine((value, ctx) => {
-    if (value.visibility === "private" && value.password === "") {
-      ctx.addIssue({
-        code: "custom",
-        message: "Password cannot be empty.",
-        path: ["password"]
-      });
-    }
   });
 
 type PersistedSnapshot = {
@@ -237,7 +228,10 @@ export class RoomService {
       throw new AppError(404, "Room not found.");
     }
 
-    const parsed = updateRoomSchema.parse(payload);
+    const parsed = updateRoomSchema.parse({
+      ...payload,
+      password: typeof payload.password === "string" ? payload.password.trim() || undefined : undefined
+    });
     const room = await RoomModel.findOne({ slug: normalizedSlug });
 
     if (!room) {
