@@ -1,7 +1,11 @@
 import {
   DEFAULT_LANGUAGE,
+  GENERATED_ROOM_SLUG_ALPHABET,
+  GENERATED_ROOM_SLUG_LENGTH,
   ROOM_VISIBILITIES,
   SUPPORTED_LANGUAGES,
+  isReservedRoomSlug,
+  normalizeRoomSlug,
   type RoomAccessLevel,
   type RoomAccessRequest,
   type RoomAccessResponse,
@@ -12,6 +16,7 @@ import {
   type SupportedLanguage
 } from "@codeshare/shared";
 import bcrypt from "bcrypt";
+import { randomInt } from "node:crypto";
 import { z } from "zod";
 
 import { env } from "../config/env.js";
@@ -82,15 +87,29 @@ type SnapshotOptions = {
   viewerKey: string;
 };
 
+const GENERATED_SLUG_ATTEMPTS = 24;
+
+function isDuplicateKeyError(error: unknown) {
+  return typeof error === "object" && error !== null && "code" in error && error.code === 11000;
+}
+
 export class RoomService {
   constructor(private readonly siteUrl: string) {}
 
   validateSlug(slug: string) {
-    return slugSchema.parse(slug).toLowerCase();
+    return normalizeRoomSlug(slugSchema.parse(slug));
   }
 
   async getMetadata(slug: string): Promise<RoomMetadataResponse> {
     const normalizedSlug = this.validateSlug(slug);
+
+    if (isReservedRoomSlug(normalizedSlug)) {
+      return {
+        exists: false,
+        slug: normalizedSlug
+      };
+    }
+
     const room = await RoomModel.findOne({ slug: normalizedSlug }).lean();
 
     if (!room) {
@@ -115,15 +134,11 @@ export class RoomService {
     const language = parsed.language ?? DEFAULT_LANGUAGE;
     const ownerToken = generateOpaqueToken(24);
     const viewerKey = generateOpaqueToken(18);
-
-    try {
-      const passwordHash =
-        parsed.visibility === "private" && parsed.password
-          ? await bcrypt.hash(parsed.password, env.BCRYPT_ROUNDS)
-          : null;
-
-      const room = await RoomModel.create({
-        slug: normalizedSlug,
+    const passwordHash =
+      parsed.visibility === "private" && parsed.password ? await bcrypt.hash(parsed.password, env.BCRYPT_ROUNDS) : null;
+    const createRoomRecord = (roomSlug: string) =>
+      RoomModel.create({
+        slug: roomSlug,
         visibility: parsed.visibility,
         passwordHash,
         ownerTokenHash: hashOpaqueToken(ownerToken),
@@ -135,25 +150,28 @@ export class RoomService {
         lastActivityAt: new Date()
       });
 
-      return {
-        room: this.toSnapshot(room, {
-          accessLevel: "owner",
-          isOwner: true,
-          viewerKey
-        }),
-        accessToken: signAccessToken(
-          {
-            roomId: room._id.toString(),
-            slug: room.slug,
-            accessLevel: "owner"
-          },
-          room.expiresAt
-        ),
-        ownerToken,
-        accessLevel: "owner"
-      };
+    if (isReservedRoomSlug(normalizedSlug)) {
+      for (let attempt = 0; attempt < GENERATED_SLUG_ATTEMPTS; attempt += 1) {
+        try {
+          const room = await createRoomRecord(this.generateRoomSlug());
+          return this.buildCreateResponse(room, ownerToken, viewerKey);
+        } catch (error) {
+          if (isDuplicateKeyError(error)) {
+            continue;
+          }
+
+          throw error;
+        }
+      }
+
+      throw new AppError(503, "Unable to generate a free room URL right now. Please try again.");
+    }
+
+    try {
+      const room = await createRoomRecord(normalizedSlug);
+      return this.buildCreateResponse(room, ownerToken, viewerKey);
     } catch (error) {
-      if (typeof error === "object" && error !== null && "code" in error && error.code === 11000) {
+      if (isDuplicateKeyError(error)) {
         throw new AppError(409, "That room name is already taken.");
       }
 
@@ -163,6 +181,11 @@ export class RoomService {
 
   async accessRoom(slug: string, payload: RoomAccessRequest): Promise<RoomAccessResponse> {
     const normalizedSlug = this.validateSlug(slug);
+
+    if (isReservedRoomSlug(normalizedSlug)) {
+      throw new AppError(404, "Room not found.");
+    }
+
     const parsed = accessRoomSchema.parse(payload);
     const room = await RoomModel.findOne({ slug: normalizedSlug });
 
@@ -209,6 +232,11 @@ export class RoomService {
 
   async updateRoomSettings(slug: string, payload: RoomSettingsRequest, ownerToken: string | undefined) {
     const normalizedSlug = this.validateSlug(slug);
+
+    if (isReservedRoomSlug(normalizedSlug)) {
+      throw new AppError(404, "Room not found.");
+    }
+
     const parsed = updateRoomSchema.parse(payload);
     const room = await RoomModel.findOne({ slug: normalizedSlug });
 
@@ -246,6 +274,11 @@ export class RoomService {
 
   async deleteRoom(slug: string, ownerToken: string | undefined) {
     const normalizedSlug = this.validateSlug(slug);
+
+    if (isReservedRoomSlug(normalizedSlug)) {
+      throw new AppError(404, "Room not found.");
+    }
+
     const room = await RoomModel.findOne({ slug: normalizedSlug });
 
     if (!room) {
@@ -310,5 +343,39 @@ export class RoomService {
     if (!verifyOpaqueToken(ownerToken, room.ownerTokenHash)) {
       throw new AppError(403, "Owner token invalid or missing.");
     }
+  }
+
+  private buildCreateResponse(
+    room: Pick<RoomDocument, "_id" | "slug" | "visibility" | "language" | "code" | "expiresAt" | "createdAt" | "updatedAt">,
+    ownerToken: string,
+    viewerKey: string
+  ): RoomAccessResponse {
+    return {
+      room: this.toSnapshot(room, {
+        accessLevel: "owner",
+        isOwner: true,
+        viewerKey
+      }),
+      accessToken: signAccessToken(
+        {
+          roomId: room._id.toString(),
+          slug: room.slug,
+          accessLevel: "owner"
+        },
+        room.expiresAt
+      ),
+      ownerToken,
+      accessLevel: "owner"
+    };
+  }
+
+  private generateRoomSlug() {
+    let slug = "";
+
+    for (let index = 0; index < GENERATED_ROOM_SLUG_LENGTH; index += 1) {
+      slug += GENERATED_ROOM_SLUG_ALPHABET[randomInt(GENERATED_ROOM_SLUG_ALPHABET.length)];
+    }
+
+    return slug;
   }
 }

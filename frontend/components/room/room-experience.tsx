@@ -1,6 +1,12 @@
 "use client";
 
-import { DEFAULT_LANGUAGE, type RoomAccessResponse, type RoomSnapshot, type SupportedLanguage } from "@codeshare/shared";
+import {
+  DEFAULT_LANGUAGE,
+  isReservedRoomSlug,
+  type RoomAccessResponse,
+  type RoomSnapshot,
+  type SupportedLanguage
+} from "@codeshare/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -18,6 +24,7 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const viewerFromUrl = searchParams.get("viewer") ?? "";
+  const isLauncherSlug = isReservedRoomSlug(slug);
 
   const [session, setSession] = useState<RoomAccessResponse | null>(null);
   const [busy, setBusy] = useState(false);
@@ -25,15 +32,16 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
   const [error, setError] = useState("");
   const [defaultLanguage] = useState<SupportedLanguage>(DEFAULT_LANGUAGE);
   const [viewerLink, setViewerLink] = useState("");
+  const activeRoomSlug = session?.room.slug ?? slug;
 
   useEffect(() => {
     void hydrateRoom();
   }, [slug, viewerFromUrl]);
 
   useEffect(() => {
-    const viewerKey = getViewerKey(slug);
-    setViewerLink(viewerKey ? `${window.location.origin}/room/${slug}?viewer=${viewerKey}` : "");
-  }, [slug, session?.room.viewerKey]);
+    const viewerKey = getViewerKey(activeRoomSlug);
+    setViewerLink(viewerKey ? `${window.location.origin}/room/${activeRoomSlug}?viewer=${viewerKey}` : "");
+  }, [activeRoomSlug, session?.room.viewerKey]);
 
   async function hydrateRoom() {
     setBusy(true);
@@ -84,17 +92,19 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
   }
 
   function handleSession(access: RoomAccessResponse) {
+    const roomSlug = access.room.slug;
+
     if (access.ownerToken) {
-      setOwnerToken(slug, access.ownerToken);
+      setOwnerToken(roomSlug, access.ownerToken);
     }
 
     if (access.room.viewerKey) {
-      setViewerKey(slug, access.room.viewerKey);
+      setViewerKey(roomSlug, access.room.viewerKey);
     }
 
     if (typeof window !== "undefined") {
-      const storedViewerKey = access.room.viewerKey || getViewerKey(slug);
-      setViewerLink(storedViewerKey ? `${window.location.origin}/room/${slug}?viewer=${storedViewerKey}` : "");
+      const storedViewerKey = access.room.viewerKey || getViewerKey(roomSlug);
+      setViewerLink(storedViewerKey ? `${window.location.origin}/room/${roomSlug}?viewer=${storedViewerKey}` : "");
     }
 
     setSession(access);
@@ -114,6 +124,10 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
     try {
       const access = await createRoom(slug, input);
       handleSession(access);
+
+      if (access.room.slug !== slug) {
+        router.replace(`/room/${access.room.slug}`);
+      }
     } catch (roomError) {
       setError(roomError instanceof Error ? roomError.message : "Failed to create room.");
     } finally {
@@ -143,18 +157,18 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
     expiryHours: number;
     language: SupportedLanguage;
   }) {
-    const ownerToken = getOwnerToken(slug);
+    const ownerToken = getOwnerToken(activeRoomSlug);
 
     if (!ownerToken) {
       throw new Error("Owner token missing on this device.");
     }
 
-    const response = await updateRoomSettings(slug, input, ownerToken);
-    const storedViewerKey = getViewerKey(slug);
+    const response = await updateRoomSettings(activeRoomSlug, input, ownerToken);
+    const storedViewerKey = getViewerKey(activeRoomSlug);
     const nextRoom = {
       ...response.room,
       viewerKey: storedViewerKey,
-      readOnlyViewerUrl: storedViewerKey ? `${window.location.origin}/room/${slug}?viewer=${storedViewerKey}` : ""
+      readOnlyViewerUrl: storedViewerKey ? `${window.location.origin}/room/${activeRoomSlug}?viewer=${storedViewerKey}` : ""
     };
 
     setSession((current) => (current ? { ...current, room: nextRoom } : current));
@@ -163,14 +177,14 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
   }
 
   async function handleDeleteRoom() {
-    const ownerToken = getOwnerToken(slug);
+    const ownerToken = getOwnerToken(activeRoomSlug);
 
     if (!ownerToken) {
       throw new Error("Owner token missing on this device.");
     }
 
-    await deleteRoom(slug, ownerToken);
-    clearRoomSecrets(slug);
+    await deleteRoom(activeRoomSlug, ownerToken);
+    clearRoomSecrets(activeRoomSlug);
     router.push("/");
   }
 
@@ -199,7 +213,9 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
       ) : (
         <section className="container-shell py-24">
           <div className="glass-panel rounded-[2rem] p-8">
-            <h1 className="text-3xl font-semibold">Preparing room `{slug}`</h1>
+            <h1 className="text-3xl font-semibold">
+              {isLauncherSlug ? "Preparing a new room" : `Preparing room \`${slug}\``}
+            </h1>
             <p className="body-copy mt-4">
               {error || "Checking room privacy and loading the live collaboration environment."}
             </p>

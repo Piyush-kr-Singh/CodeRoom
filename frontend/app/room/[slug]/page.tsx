@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isReservedRoomSlug } from "@codeshare/shared";
 
 import { RoomExperience } from "@/components/room/room-experience";
 import { siteConfig } from "@/lib/site";
@@ -11,6 +12,13 @@ type RoomPageProps = {
 
 export async function generateMetadata({ params }: RoomPageProps): Promise<Metadata> {
   const { slug } = await params;
+
+  if (isReservedRoomSlug(slug)) {
+    return {
+      title: `Create a Room | ${siteConfig.name}`,
+      description: "Start a fresh anonymous room and get a generated shareable URL in one step."
+    };
+  }
 
   return {
     title: `Room ${slug} | ${siteConfig.name}`,

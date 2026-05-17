@@ -33,4 +33,15 @@ describe("room API", () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Validation failed.");
   });
+
+  it("treats reserved launcher slugs as reusable entry points", async () => {
+    const app = buildApp(new RoomService("http://localhost:3000"));
+    const response = await request(app).get("/api/rooms/new/metadata");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      exists: false,
+      slug: "new"
+    });
+  });
 });

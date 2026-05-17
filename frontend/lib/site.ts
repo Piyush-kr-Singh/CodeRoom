@@ -5,8 +5,8 @@ export const siteConfig = {
   title: "CodeSyncUp | Anonymous Real-Time Code Sharing Tool",
   description:
     "Share code instantly without login. Create private password-protected rooms with custom expiry and real-time collaboration.",
-  roomLaunchPath: "/room/your-room-name",
-  roomLaunchLabel: "/room/your-room-name"
+  roomLaunchPath: "/room/new",
+  roomLaunchLabel: "/room/a7k2q9"
 };
 
 export const faqItems = [

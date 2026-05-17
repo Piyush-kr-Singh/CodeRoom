@@ -4,6 +4,7 @@ import {
   DEFAULT_EXPIRY_HOURS,
   EXPIRY_PRESETS_HOURS,
   SUPPORTED_LANGUAGES,
+  isReservedRoomSlug,
   type SupportedLanguage
 } from "@codeshare/shared";
 import { AnimatePresence, motion } from "framer-motion";
@@ -29,6 +30,7 @@ function getLanguageLabel(language: SupportedLanguage) {
 }
 
 export function RoomGate({ mode, slug, busy, error, defaultLanguage, onCreate, onPasswordAccess }: RoomGateProps) {
+  const isLauncherSlug = isReservedRoomSlug(slug);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -98,10 +100,19 @@ export function RoomGate({ mode, slug, busy, error, defaultLanguage, onCreate, o
                 <p className="font-mono text-xs uppercase tracking-[0.28em] text-[color:var(--accent)]">
                   Create room
                 </p>
-                <h2 className="mt-3 text-2xl font-semibold">Configure `{slug}`</h2>
+                <h2 className="mt-3 text-2xl font-semibold">
+                  {isLauncherSlug ? "Configure a new room" : `Configure \`${slug}\``}
+                </h2>
                 <p className="body-copy mt-3">
-                  This room does not exist yet. Choose privacy, expiry, and language before entering the editor.
+                  {isLauncherSlug
+                    ? "Choose privacy, expiry, and language first. We will generate a fresh shareable room URL when you continue."
+                    : "This room does not exist yet. Choose privacy, expiry, and language before entering the editor."}
                 </p>
+                {isLauncherSlug ? (
+                  <p className="body-copy mt-2 text-sm">
+                    Want a custom private URL instead? Replace `/room/new` in the address bar with your own room name before creating it.
+                  </p>
+                ) : null}
                 <form className="mt-6 grid gap-5" onSubmit={handleCreateSubmit}>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <button

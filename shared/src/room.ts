@@ -18,10 +18,22 @@ export const SUPPORTED_LANGUAGES = [
 export const DEFAULT_LANGUAGE = "plaintext";
 export const DEFAULT_EXPIRY_HOURS = 24;
 export const EXPIRY_PRESETS_HOURS = [1, 6, 12, 24, 72, 168] as const;
+export const GENERATED_ROOM_SLUG_LENGTH = 6;
+export const GENERATED_ROOM_SLUG_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789";
+export const RESERVED_ROOM_SLUGS = ["new", "your-room-name"] as const;
 
 export type RoomVisibility = (typeof ROOM_VISIBILITIES)[number];
 export type RoomAccessLevel = (typeof ROOM_ACCESS_LEVELS)[number];
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
+export function normalizeRoomSlug(slug: string) {
+  return slug.trim().toLowerCase();
+}
+
+export function isReservedRoomSlug(slug: string) {
+  const normalizedSlug = normalizeRoomSlug(slug);
+  return RESERVED_ROOM_SLUGS.some((reservedSlug) => reservedSlug === normalizedSlug);
+}
 
 export type ExpirySelection =
   | {
