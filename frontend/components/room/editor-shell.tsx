@@ -22,7 +22,26 @@ import { OwnerPanel } from "./owner-panel";
 import { ToastRack } from "./toast-rack";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
-  ssr: false
+  ssr: false,
+  loading: () => (
+    <div className="relative flex h-[72vh] w-full flex-col items-center justify-center bg-[#09131e]/50 backdrop-blur-md">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative flex h-12 w-12 items-center justify-center">
+          <div className="absolute h-full w-full animate-ping rounded-full bg-[color:var(--accent)]/20 opacity-75"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[color:var(--accent)]/20 border-t-[color:var(--accent)]"></div>
+        </div>
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--accent)] animate-pulse">
+          Loading editor...
+        </p>
+      </div>
+      <div className="absolute inset-x-6 top-6 flex flex-col gap-3 opacity-20">
+        <div className="h-4 w-1/4 rounded bg-[color:var(--muted)]/20 animate-pulse"></div>
+        <div className="h-4 w-1/2 rounded bg-[color:var(--muted)]/20 animate-pulse"></div>
+        <div className="h-4 w-1/3 rounded bg-[color:var(--muted)]/20 animate-pulse"></div>
+        <div className="h-4 w-2/3 rounded bg-[color:var(--muted)]/20 animate-pulse"></div>
+      </div>
+    </div>
+  )
 });
 
 type EditorShellProps = {
@@ -60,6 +79,7 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
   const [language, setLanguage] = useState<SupportedLanguage>(session.room.language);
   const [users, setUsers] = useState<RoomPresenceUser[]>([]);
   const [connected, setConnected] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [ownerPanelOpen, setOwnerPanelOpen] = useState(false);
   const [ownerBusy, setOwnerBusy] = useState(false);
@@ -237,7 +257,11 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
   async function copyText(text: string, successMessage: string) {
     try {
       await navigator.clipboard.writeText(text);
+      setCopied(true);
       showToast(successMessage);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
     } catch {
       showToast("Clipboard access failed.");
     }
@@ -333,6 +357,36 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
       />
       <ToastRack items={toasts} />
       <section className="container-shell py-8">
+        {!connected && (
+          <div className="mb-4 flex items-center justify-between rounded-2xl border border-[color:var(--coral)]/40 bg-[color:var(--coral)]/10 px-4 py-3 text-sm text-[color:var(--coral)] backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="animate-pulse"
+              >
+                <path d="m2 22 20-20" />
+                <path d="M8.56 8.56A4 4 0 0 1 12 8v0a4 4 0 0 1 4 4v0c0 .5-.1.97-.27 1.41" />
+                <path d="M22 12a10 10 0 0 0-4.87-8.66" />
+                <path d="M2 12a10 10 0 0 0 5 8.66" />
+                <path d="M12 16a2 2 0 0 0 2-2v0a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0a2 2 0 0 0 2 2z" />
+              </svg>
+              <span>
+                <strong>Offline Mode:</strong> Connection lost. Changes will be buffered locally and synchronized when online.
+              </span>
+            </div>
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--coral)] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[color:var(--coral)]"></span>
+            </span>
+          </div>
+        )}
         <div className="glass-panel rounded-[2rem] p-4 shadow-panel sm:p-5">
           <div className="flex flex-col gap-4 border-b border-white/10 pb-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-wrap items-center gap-3">
@@ -368,8 +422,47 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
                   </option>
                 ))}
               </select>
-              <button type="button" onClick={() => copyText(code, "Copied!")} className="button-secondary px-4 py-2">
-                Copy Code
+              <button
+                type="button"
+                onClick={() => copyText(code, "Copied!")}
+                className={`button-secondary px-4 py-2 flex items-center gap-2 transition-all duration-200 ${
+                  copied ? "border-[color:var(--accent)] text-[color:var(--accent)] bg-[color:var(--accent)]/10" : ""
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    <span>Copy Code</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
