@@ -4,10 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node ../scripts/ensure-workspace-links.mjs",
     "dev": "tsx watch src/server.ts",
+    "prebuild": "node ../scripts/ensure-workspace-links.mjs",
     "build": "tsc -p tsconfig.json",
+    "prestart": "node ../scripts/ensure-workspace-links.mjs",
     "start": "node dist/server.js",
+    "pretype-check": "node ../scripts/ensure-workspace-links.mjs",
     "type-check": "tsc -p tsconfig.json --noEmit",
+    "pretest": "node ../scripts/ensure-workspace-links.mjs",
     "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --runInBand --config jest.config.mjs"
   },
   "dependencies": {

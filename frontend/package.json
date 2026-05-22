@@ -4,10 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "node ../scripts/ensure-workspace-links.mjs",
     "dev": "node ./scripts/run-next.mjs dev",
+    "prebuild": "node ../scripts/ensure-workspace-links.mjs",
     "build": "node ./scripts/run-next.mjs build",
+    "prestart": "node ../scripts/ensure-workspace-links.mjs",
     "start": "node ./scripts/run-next.mjs start",
+    "pretype-check": "node ../scripts/ensure-workspace-links.mjs",
     "type-check": "tsc --noEmit",
+    "pretest": "node ../scripts/ensure-workspace-links.mjs",
     "test": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js --runInBand --config jest.config.mjs"
   },
   "dependencies": {

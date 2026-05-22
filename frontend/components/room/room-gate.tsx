@@ -84,13 +84,13 @@ export function RoomGate({ mode, slug, busy, error, defaultLanguage, onCreate, o
     <AnimatePresence>
       {mode ? (
         <motion.div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(2,7,12,0.72)] p-4 backdrop-blur-md"
+          className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-[rgba(2,7,12,0.72)] p-2 backdrop-blur-md sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="glass-panel w-full max-w-xl rounded-[2rem] p-6 shadow-panel sm:p-8"
+            className="glass-panel code-scrollbar my-auto w-full max-w-xl overflow-y-auto rounded-[2rem] p-6 shadow-panel sm:max-h-[calc(100dvh-2rem)] sm:p-8"
             initial={{ opacity: 0, y: 24, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24 }}
