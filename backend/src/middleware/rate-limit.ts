@@ -28,3 +28,14 @@ export const passwordAttemptLimiter = rateLimit({
     message: "Too many access attempts from this IP. Please slow down."
   }
 });
+
+export const contactFormLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour window
+  limit: 5, // limit each IP to 5 contact submissions per hour
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: "Too many contact messages sent from this IP. Please try again in an hour."
+  }
+});
+

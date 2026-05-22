@@ -4,7 +4,7 @@ import { blogPosts } from "@/content/blog";
 import { siteConfig } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages = ["", "/features", "/private-code-sharing", "/realtime-code-editor", "/faq", "/blog"];
+  const staticPages = ["", "/features", "/private-code-sharing", "/realtime-code-editor", "/faq", "/blog", "/privacy", "/terms", "/disclaimer", "/contact"];
 
   return [
     ...staticPages.map((path) => ({

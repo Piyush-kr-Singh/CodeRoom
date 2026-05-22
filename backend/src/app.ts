@@ -8,6 +8,7 @@ import { env } from "./config/env.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { globalLimiter } from "./middleware/rate-limit.js";
 import { createRoomRouter } from "./routes/room.routes.js";
+import { createContactRouter } from "./routes/contact.routes.js";
 import { RoomService } from "./services/room.service.js";
 
 export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
@@ -52,6 +53,7 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   });
 
   app.use("/api/rooms", createRoomRouter(roomService));
+  app.use("/api/contact", createContactRouter());
   app.use((_request: Request, response: Response) => {
     response.status(404).json({
       message: "Not found."
@@ -61,3 +63,4 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
 
   return app;
 }
+
