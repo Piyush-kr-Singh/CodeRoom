@@ -6,7 +6,7 @@ export default {
   setupFiles: ["<rootDir>/tests/setup.ts"],
   extensionsToTreatAsEsm: [".ts"],
   transform: {
-    "^.+\\.ts$": ["ts-jest", { useESM: true, tsconfig: "<rootDir>/tsconfig.json" }]
+    "^.+\\.ts$": ["ts-jest", { useESM: true, tsconfig: "<rootDir>/tsconfig.test.json" }]
   },
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1"

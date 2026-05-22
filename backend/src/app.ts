@@ -24,6 +24,13 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));
 
+  app.get("/", (_request, response) => {
+    response.json({
+      status: "ok",
+      message: "Server is running."
+    });
+  });
+
   app.get("/health", (_request, response) => {
     response.json({
       status: "ok",
