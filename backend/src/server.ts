@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer, type Server as HttpServer } from "node:http";
 
 import mongoose from "mongoose";
 
@@ -16,11 +16,51 @@ async function bootstrap() {
   const app = buildApp(roomService);
   const httpServer = createServer(app);
 
-  await createSocketServer(httpServer, roomService);
+  const io = await createSocketServer(httpServer, roomService);
 
   httpServer.listen(env.PORT, () => {
     logger.info(`Backend listening on port ${env.PORT}.`);
   });
+
+  setupGracefulShutdown(httpServer, io);
+}
+
+function setupGracefulShutdown(httpServer: HttpServer, io: Awaited<ReturnType<typeof createSocketServer>>) {
+  let shuttingDown = false;
+
+  async function shutdown(signal: string) {
+    if (shuttingDown) {
+      return;
+    }
+
+    shuttingDown = true;
+    logger.info(`Received ${signal}. Starting graceful shutdown.`);
+
+    // Stop accepting new connections
+    io.close();
+
+    httpServer.close(async () => {
+      logger.info("HTTP server closed.");
+
+      try {
+        await mongoose.connection.close();
+        logger.info("MongoDB connection closed.");
+      } catch (error) {
+        logger.error("Error closing MongoDB connection.", error);
+      }
+
+      process.exit(0);
+    });
+
+    // Force exit after 10 seconds if graceful shutdown hangs
+    setTimeout(() => {
+      logger.error("Graceful shutdown timed out. Forcing exit.");
+      process.exit(1);
+    }, 10_000).unref();
+  }
+
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
 }
 
 bootstrap().catch((error) => {

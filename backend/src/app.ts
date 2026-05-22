@@ -1,6 +1,7 @@
 import cors from "cors";
 import express, { type Request, type Response } from "express";
 import helmet from "helmet";
+import mongoose from "mongoose";
 import morgan from "morgan";
 
 import { env } from "./config/env.js";
@@ -22,7 +23,7 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   app.use(helmet());
   app.use(globalLimiter);
   app.use(express.json({ limit: "1mb" }));
-  app.use(morgan("dev"));
+  app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
   app.get("/", (_request: Request, response: Response) => {
     response.json({
@@ -32,9 +33,21 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   });
 
   app.get("/health", (_request: Request, response: Response) => {
+    const dbReady = mongoose.connection.readyState === 1;
+
+    if (!dbReady) {
+      response.status(503).json({
+        status: "degraded",
+        uptime: process.uptime(),
+        database: "disconnected"
+      });
+      return;
+    }
+
     response.json({
       status: "ok",
-      uptime: process.uptime()
+      uptime: process.uptime(),
+      database: "connected"
     });
   });
 

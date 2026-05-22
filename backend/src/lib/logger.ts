@@ -1,8 +1,36 @@
 type LogLevel = "info" | "warn" | "error";
 
-function log(level: LogLevel, message: string, meta?: unknown) {
+const isProduction = process.env.NODE_ENV === "production";
+
+function formatJson(level: LogLevel, message: string, meta?: unknown): string {
+  const entry: Record<string, unknown> = {
+    timestamp: new Date().toISOString(),
+    level: level.toUpperCase(),
+    message
+  };
+
+  if (meta !== undefined) {
+    if (meta instanceof Error) {
+      entry.error = {
+        name: meta.name,
+        message: meta.message,
+        stack: meta.stack
+      };
+    } else {
+      entry.meta = meta;
+    }
+  }
+
+  return JSON.stringify(entry);
+}
+
+function formatDev(level: LogLevel, message: string, meta?: unknown): string {
   const payload = meta ? ` ${JSON.stringify(meta)}` : "";
-  const line = `[${new Date().toISOString()}] ${level.toUpperCase()} ${message}${payload}`;
+  return `[${new Date().toISOString()}] ${level.toUpperCase()} ${message}${payload}`;
+}
+
+function log(level: LogLevel, message: string, meta?: unknown) {
+  const line = isProduction ? formatJson(level, message, meta) : formatDev(level, message, meta);
 
   if (level === "error") {
     console.error(line);
