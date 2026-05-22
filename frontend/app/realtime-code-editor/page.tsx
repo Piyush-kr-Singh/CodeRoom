@@ -1,17 +1,20 @@
 import Link from "next/link";
 
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { buildMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "Realtime Code Editor for Instant Collaboration",
-  description: "Use a real-time Monaco-powered code editor with presence, copy-code actions, and URL-based collaboration.",
+  title: "Real-Time Online Code Editor - Live Coding Share | CodeSyncUp",
+  description: "Share and edit code instantly with an online collaborative editor. Enjoy zero-latency text sync, presence count, anonymous displays, and quick copy-paste tools.",
   path: "/realtime-code-editor"
 });
 
 export default function RealtimeCodeEditorPage() {
   return (
-    <section className="container-shell py-20">
+    <>
+      <BreadcrumbData items={[{ name: "Realtime Code Editor", path: "/realtime-code-editor" }]} />
+      <section className="container-shell py-20">
       <h1 className="headline">Realtime Code Editor</h1>
       <h2 className="mt-6 text-2xl text-[color:var(--muted)]">Monaco + Socket.io for fast collaborative editing</h2>
       <p className="body-copy mt-8 max-w-3xl">
@@ -34,5 +37,6 @@ export default function RealtimeCodeEditorPage() {
         Launch the editor
       </Link>
     </section>
+   </>
   );
 }

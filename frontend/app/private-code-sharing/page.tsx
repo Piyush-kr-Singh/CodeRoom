@@ -1,16 +1,18 @@
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "Private Code Sharing Without Login",
-  description: "Create private code sharing rooms with passwords, expiring links, and temporary anonymous ownership.",
+  title: "Private Code Share Online - Secure Coding Share | CodeSyncUp",
+  description: "Securely share code and private text documents without registration. Protect your code rooms with password authentication and MongoDB TTL automatic room expiry.",
   path: "/private-code-sharing"
 });
 
 export default function PrivateCodeSharingPage() {
   return (
     <>
+      <BreadcrumbData items={[{ name: "Private Code Sharing", path: "/private-code-sharing" }]} />
       <StructuredData
         data={{
           "@context": "https://schema.org",

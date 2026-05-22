@@ -1,3 +1,4 @@
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
 import { faqItems, siteConfig } from "@/lib/site";
@@ -11,6 +12,7 @@ export const metadata = buildMetadata({
 export default function FaqPage() {
   return (
     <>
+      <BreadcrumbData items={[{ name: "FAQ", path: "/faq" }]} />
       <StructuredData
         data={{
           "@context": "https://schema.org",

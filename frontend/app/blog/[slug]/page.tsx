@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { blogPosts } from "@/content/blog";
+import { buildMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/lib/site";
 
 type BlogPageProps = {
@@ -25,17 +27,17 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     return {};
   }
 
-  return {
-    title: post.title,
+  const baseMetadata = buildMetadata({
+    title: `${post.title} | CodeSyncUp Blog`,
     description: post.description,
-    alternates: {
-      canonical: `${siteConfig.domain}/blog/${post.slug}`
-    },
+    path: `/blog/${post.slug}`
+  });
+
+  return {
+    ...baseMetadata,
     openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      url: `${siteConfig.domain}/blog/${post.slug}`
+      ...baseMetadata.openGraph,
+      type: "article"
     }
   };
 }
@@ -50,6 +52,7 @@ export default async function BlogDetailPage({ params }: BlogPageProps) {
 
   return (
     <>
+      <BreadcrumbData items={[{ name: "Blog", path: "/blog" }, { name: post.title, path: `/blog/${post.slug}` }]} />
       <StructuredData
         data={{
           "@context": "https://schema.org",

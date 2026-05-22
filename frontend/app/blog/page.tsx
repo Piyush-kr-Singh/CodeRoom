@@ -1,17 +1,20 @@
 import Link from "next/link";
 
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { blogPosts } from "@/content/blog";
 import { buildMetadata } from "@/lib/metadata";
 
 export const metadata = buildMetadata({
-  title: "Blog | Anonymous Code Sharing Guides",
-  description: "SEO guides on anonymous code sharing, secure collaboration, and the best alternatives to old code sharing tools.",
+  title: "Developer Blog - Coding Share & Collaborative Syncing Insights | CodeSyncUp",
+  description: "Read guides on anonymous coding share and collaborative text sync. Learn about secure code sharing, privacy practices, and development workflow alternatives.",
   path: "/blog"
 });
 
 export default function BlogIndexPage() {
   return (
-    <section className="container-shell py-20">
+    <>
+      <BreadcrumbData items={[{ name: "Blog", path: "/blog" }]} />
+      <section className="container-shell py-20">
       <h1 className="headline">Blog</h1>
       <p className="body-copy mt-6 max-w-3xl">
         Guides for teams comparing tools, improving privacy, and sharing code online without adding signup friction.
@@ -27,6 +30,7 @@ export default function BlogIndexPage() {
           </article>
         ))}
       </div>
-    </section>
+      </section>
+    </>
   );
 }

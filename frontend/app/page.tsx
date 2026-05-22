@@ -7,8 +7,8 @@ import { buildMetadata } from "@/lib/metadata";
 import { faqItems, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "Anonymous Real-Time Code Sharing Tool | Public & Private Rooms",
-  description: siteConfig.description,
+  title: "Code Share Online - Anonymous Real-Time Coding Share & Text Sync | CodeSyncUp",
+  description: "CodeSyncUp is the ultimate free online code share and text sync tool. Share code and text snippets instantly without login. Create private password-protected rooms with real-time Monaco-powered collaboration.",
   path: "/"
 });
 

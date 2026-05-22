@@ -1,18 +1,20 @@
 import Link from "next/link";
 
+import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { SectionShell } from "@/components/section-shell";
 import { buildMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
-  title: "Features | Anonymous Code Sharing Rooms",
-  description: "Explore real-time code sharing features built for anonymous, password-protected, expiring rooms.",
+  title: "Real-Time Code Sync & Coding Share Features | CodeSyncUp",
+  description: "Discover modern coding share and text sync features built for anonymous rooms: live socket collaboration, password protection, customizable TTL expiry windows, and Monaco editor presences.",
   path: "/features"
 });
 
 export default function FeaturesPage() {
   return (
     <>
+      <BreadcrumbData items={[{ name: "Features", path: "/features" }]} />
       <section className="container-shell py-20">
         <p className="font-mono text-xs uppercase tracking-[0.32em] text-[color:var(--accent)]">Feature set</p>
         <h1 className="headline mt-4">Anonymous collaboration with practical controls</h1>
