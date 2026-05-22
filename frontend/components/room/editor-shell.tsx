@@ -117,6 +117,23 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
       setConnected(false);
     });
 
+    socket.on("connect_error", (error) => {
+      setConnected(false);
+      const errorMessage = error.message || "Connection failed.";
+      showToast(errorMessage);
+
+      const isFatal =
+        errorMessage.toLowerCase().includes("full") ||
+        errorMessage.toLowerCase().includes("not found") ||
+        errorMessage.toLowerCase().includes("token") ||
+        errorMessage.toLowerCase().includes("unauthorized") ||
+        errorMessage.toLowerCase().includes("expired");
+
+      if (isFatal) {
+        socket.disconnect();
+      }
+    });
+
     socket.on("room:snapshot", (payload: { code: string; language: SupportedLanguage }) => {
       syncEditorFromServer(payload.code, payload.language);
     });

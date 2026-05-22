@@ -13,16 +13,23 @@ type RoomPageProps = {
 export async function generateMetadata({ params }: RoomPageProps): Promise<Metadata> {
   const { slug } = await params;
 
+  const robotsConfig = {
+    index: false,
+    follow: false
+  };
+
   if (isReservedRoomSlug(slug)) {
     return {
       title: `Create a Room | ${siteConfig.name}`,
-      description: "Start a fresh anonymous room and get a generated shareable URL in one step."
+      description: "Start a fresh anonymous room and get a generated shareable URL in one step.",
+      robots: robotsConfig
     };
   }
 
   return {
     title: `Room ${slug} | ${siteConfig.name}`,
-    description: "Collaborate in a real-time anonymous code room with optional password protection and expiring access."
+    description: "Collaborate in a real-time anonymous code room with optional password protection and expiring access.",
+    robots: robotsConfig
   };
 }
 
