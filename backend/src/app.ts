@@ -1,5 +1,5 @@
 import cors from "cors";
-import express from "express";
+import express, { type Request, type Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
@@ -24,14 +24,14 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   app.use(express.json({ limit: "1mb" }));
   app.use(morgan("dev"));
 
-  app.get("/", (_request, response) => {
+  app.get("/", (_request: Request, response: Response) => {
     response.json({
       status: "ok",
       message: "Server is running."
     });
   });
 
-  app.get("/health", (_request, response) => {
+  app.get("/health", (_request: Request, response: Response) => {
     response.json({
       status: "ok",
       uptime: process.uptime()
@@ -39,7 +39,7 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
   });
 
   app.use("/api/rooms", createRoomRouter(roomService));
-  app.use((_request, response) => {
+  app.use((_request: Request, response: Response) => {
     response.status(404).json({
       message: "Not found."
     });

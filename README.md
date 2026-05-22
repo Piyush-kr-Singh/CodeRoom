@@ -93,6 +93,11 @@ npm run dev:frontend
    - `REDIS_URL` if you want multi-instance socket scaling
 5. Enable sticky sessions if your platform requires them for websockets.
 
+If you prefer to keep the service root at the repo root, use:
+
+- Build command: `npm install && npm run build:backend`
+- Start command: `npm run start:backend`
+
 ### MongoDB Atlas
 
 1. Create an Atlas cluster.

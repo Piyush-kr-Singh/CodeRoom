@@ -11,7 +11,9 @@
     "ensure:workspaces": "node ./scripts/ensure-workspace-links.mjs",
     "dev:frontend": "npm run dev --workspace frontend",
     "dev:backend": "npm run dev --workspace backend",
+    "build:backend": "npm run build --workspace shared && npm run build --workspace backend",
     "build": "npm run build --workspace shared && npm run build --workspace backend && npm run build --workspace frontend",
+    "start:backend": "npm run start --workspace backend",
     "type-check": "npm run build --workspace shared && npm run type-check --workspace backend && npm run type-check --workspace frontend",
     "test": "npm run test --workspace backend && npm run test --workspace frontend"
   }
