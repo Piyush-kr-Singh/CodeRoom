@@ -1,9 +1,10 @@
 import Link from "next/link";
 
+import { LaunchRoomAction } from "@/components/launch-room-action";
 import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
-import { absoluteUrl, siteConfig } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Real-Time Online Code Editor - Live Coding Share | CodeSyncUp",
@@ -51,9 +52,9 @@ export default function RealtimeCodeEditorPage() {
           ))}
         </div>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href={siteConfig.roomLaunchPath} className="button-primary">
+          <LaunchRoomAction className="button-primary" ariaLabel="Launch the editor">
             Launch the editor
-          </Link>
+          </LaunchRoomAction>
           <Link href="/private-code-sharing" className="button-secondary">
             See private room controls
           </Link>

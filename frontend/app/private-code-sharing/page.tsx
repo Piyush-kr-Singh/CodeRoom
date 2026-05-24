@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LaunchRoomAction } from "@/components/launch-room-action";
 import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
@@ -53,9 +54,9 @@ export default function PrivateCodeSharingPage() {
           ))}
         </div>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href={siteConfig.roomLaunchPath} className="button-primary">
+          <LaunchRoomAction className="button-primary" ariaLabel="Start a private room">
             Start a private room
-          </Link>
+          </LaunchRoomAction>
           <Link href="/features" className="button-secondary">
             Review features
           </Link>

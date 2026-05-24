@@ -83,6 +83,15 @@ a {
   @apply text-base leading-7 sm:text-lg;
 }
 
+.button-reset {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
 .button-primary {
   @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-medium transition;
   background: linear-gradient(135deg, var(--accent), #7be4da);

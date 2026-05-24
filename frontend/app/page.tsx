@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LaunchRoomAction } from "@/components/launch-room-action";
 import { Reveal } from "@/components/reveal";
 import { SectionShell } from "@/components/section-shell";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -68,9 +69,9 @@ export default function HomePage() {
             protect them with a password when needed, and let MongoDB expiry rules clean everything up automatically.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link href={siteConfig.roomLaunchPath} className="button-primary">
+            <LaunchRoomAction className="button-primary" ariaLabel="Start a live room">
               Start a live room
-            </Link>
+            </LaunchRoomAction>
             <Link href="/features" className="button-secondary">
               Explore features
             </Link>

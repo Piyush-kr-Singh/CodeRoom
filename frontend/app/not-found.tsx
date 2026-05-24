@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/site";
 import type { Metadata } from "next";
+
+import { LaunchRoomAction } from "@/components/launch-room-action";
 
 export const metadata: Metadata = {
   title: "Page Not Found | CodeSyncUp",
@@ -40,12 +41,9 @@ export default function NotFound() {
             <Link href="/" className="button-primary">
               Back to home
             </Link>
-            <Link
-              href={siteConfig.roomLaunchPath}
-              className="button-secondary"
-            >
+            <LaunchRoomAction className="button-secondary" ariaLabel="Start a live room">
               Start a live room
-            </Link>
+            </LaunchRoomAction>
           </div>
         </div>
       </div>

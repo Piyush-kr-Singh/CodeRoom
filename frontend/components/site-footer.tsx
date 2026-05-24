@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LaunchRoomAction } from "@/components/launch-room-action";
 import { siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
@@ -16,7 +17,13 @@ export function SiteFooter() {
             <Link href="/features" className="transition hover:text-[color:var(--foreground)]">Features</Link>
             <Link href="/faq" className="transition hover:text-[color:var(--foreground)]">FAQ</Link>
             <Link href="/blog" className="transition hover:text-[color:var(--foreground)]">Blog</Link>
-            <Link href={siteConfig.roomLaunchPath} className="transition hover:text-[color:var(--foreground)]">Launch a room</Link>
+            <LaunchRoomAction
+              className="text-left transition hover:text-[color:var(--foreground)]"
+              ariaLabel="Launch a new room"
+              formClassName="w-fit"
+            >
+              Launch a room
+            </LaunchRoomAction>
           </div>
           <div className="flex flex-col gap-2">
             <p className="mb-1 font-mono text-xs uppercase tracking-[0.2em] text-[color:var(--foreground)]">Legal</p>

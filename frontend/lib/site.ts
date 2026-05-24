@@ -34,9 +34,11 @@ export const siteConfig = {
   category: "Developer Tools",
   themeColor: "#081018",
   siteUpdatedAt: "2026-05-24T00:00:00.000Z",
+  legalUpdatedLabel: "May 2026",
   rssPath: "/feed.xml",
   defaultOgImagePath: "/opengraph-image",
   roomLaunchPath: "/room/new",
+  roomLauncherPaths: ["/room/new", "/room/your-room-name"],
   roomLaunchLabel: "/room/a7k2q9",
   keywords: [
     "code share online",

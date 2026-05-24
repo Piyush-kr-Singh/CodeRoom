@@ -4,11 +4,13 @@ import { siteConfig } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/room/*", "/api/*"]
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: ["/", ...siteConfig.roomLauncherPaths],
+        disallow: ["/room/*", "/api/*"]
+      }
+    ],
     sitemap: `${siteConfig.domain}/sitemap.xml`,
     host: siteConfig.domain
   };

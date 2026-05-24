@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
+import { LaunchRoomAction } from "@/components/launch-room-action";
 import { siteConfig } from "@/lib/site";
 import { getOwnerToken, ROOM_OWNER_STATE_EVENT } from "@/lib/storage";
 
@@ -65,9 +66,9 @@ export function SiteHeader() {
               Room settings
             </button>
           ) : (
-            <Link href={siteConfig.roomLaunchPath} className="button-secondary px-4 py-2">
+            <LaunchRoomAction className="button-secondary px-4 py-2" ariaLabel="Open a new room">
               Open a room
-            </Link>
+            </LaunchRoomAction>
           )}
 
           {/* Mobile Menu Toggle */}

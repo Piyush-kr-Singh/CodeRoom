@@ -1,3 +1,4 @@
+import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { blogPosts } from "@/content/blog";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -30,6 +31,28 @@ describe("blog SEO content", () => {
 
     blogPosts.forEach((post) => {
       expect(urls).toContain(absoluteUrl(`/blog/${post.slug}`));
+    });
+  });
+});
+
+describe("robots rules", () => {
+  it("keeps room URLs blocked while allowing reserved launcher slugs", () => {
+    const rules = robots().rules;
+    const normalizedRules = Array.isArray(rules) ? rules : [rules];
+    const primaryRule = normalizedRules[0];
+
+    if (!primaryRule) {
+      throw new Error("Expected at least one robots rule.");
+    }
+
+    const allow = Array.isArray(primaryRule.allow) ? primaryRule.allow : [primaryRule.allow];
+    const disallow = Array.isArray(primaryRule.disallow) ? primaryRule.disallow : [primaryRule.disallow];
+
+    expect(disallow).toContain("/room/*");
+    expect(disallow).toContain("/api/*");
+
+    siteConfig.roomLauncherPaths.forEach((path) => {
+      expect(allow).toContain(path);
     });
   });
 });
