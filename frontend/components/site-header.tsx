@@ -5,6 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { LaunchRoomAction } from "@/components/launch-room-action";
+import {
+  ACTIVE_ROOM_OWNER_EVENT,
+  emitRoomSettingsOpen,
+  getActiveRoomOwner,
+  type ActiveRoomOwnerEventDetail
+} from "@/lib/room-events";
 import { siteConfig } from "@/lib/site";
 import { getOwnerToken, ROOM_OWNER_STATE_EVENT } from "@/lib/storage";
 
@@ -26,22 +32,45 @@ export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    function syncOwnerState() {
-      setIsOwnerInOpenRoom(Boolean(roomSlug) && Boolean(getOwnerToken(roomSlug)));
+    setIsOwnerInOpenRoom(getActiveRoomOwner(roomSlug));
+
+    if (!roomSlug) {
+      return;
     }
 
-    syncOwnerState();
-    window.addEventListener("storage", syncOwnerState);
-    window.addEventListener(ROOM_OWNER_STATE_EVENT, syncOwnerState);
+    function syncStoredOwnerState() {
+      if (!getOwnerToken(roomSlug)) {
+        setIsOwnerInOpenRoom(false);
+      }
+    }
+
+    function handleActiveRoomOwner(event: Event) {
+      const detail = (event as CustomEvent<ActiveRoomOwnerEventDetail>).detail;
+
+      if (!detail || detail.slug !== roomSlug) {
+        return;
+      }
+
+      setIsOwnerInOpenRoom(detail.isOwner);
+    }
+
+    window.addEventListener("storage", syncStoredOwnerState);
+    window.addEventListener(ROOM_OWNER_STATE_EVENT, syncStoredOwnerState);
+    window.addEventListener(ACTIVE_ROOM_OWNER_EVENT, handleActiveRoomOwner);
 
     return () => {
-      window.removeEventListener("storage", syncOwnerState);
-      window.removeEventListener(ROOM_OWNER_STATE_EVENT, syncOwnerState);
+      window.removeEventListener("storage", syncStoredOwnerState);
+      window.removeEventListener(ROOM_OWNER_STATE_EVENT, syncStoredOwnerState);
+      window.removeEventListener(ACTIVE_ROOM_OWNER_EVENT, handleActiveRoomOwner);
     };
   }, [roomSlug]);
 
   function openRoomSettings() {
-    window.dispatchEvent(new CustomEvent("codeshare:open-owner-panel"));
+    if (!roomSlug) {
+      return;
+    }
+
+    emitRoomSettingsOpen({ slug: roomSlug });
   }
 
   return (

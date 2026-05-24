@@ -16,6 +16,7 @@ import type { editor } from "monaco-editor";
 import { io, type Socket } from "socket.io-client";
 
 import { formatTimeRemaining } from "@/lib/format";
+import { ROOM_SETTINGS_OPEN_EVENT, type RoomSettingsOpenEventDetail } from "@/lib/room-events";
 import { siteConfig } from "@/lib/site";
 
 import { OwnerPanel } from "./owner-panel";
@@ -169,20 +170,26 @@ export function EditorShell({ session, onSaveRoom, onDeleteRoom, onRoomSnapshot 
   }, []);
 
   useEffect(() => {
-    if (!session.room.isOwner) {
+    if (session.accessLevel !== "owner") {
       return;
     }
 
-    function handleOpenOwnerPanel() {
+    function handleOpenOwnerPanel(event: Event) {
+      const detail = (event as CustomEvent<RoomSettingsOpenEventDetail>).detail;
+
+      if (detail?.slug && detail.slug !== session.room.slug) {
+        return;
+      }
+
       setOwnerPanelOpen(true);
     }
 
-    window.addEventListener("codeshare:open-owner-panel", handleOpenOwnerPanel);
+    window.addEventListener(ROOM_SETTINGS_OPEN_EVENT, handleOpenOwnerPanel);
 
     return () => {
-      window.removeEventListener("codeshare:open-owner-panel", handleOpenOwnerPanel);
+      window.removeEventListener(ROOM_SETTINGS_OPEN_EVENT, handleOpenOwnerPanel);
     };
-  }, [session.room.isOwner]);
+  }, [session.accessLevel, session.room.slug]);
 
   function syncEditorFromServer(nextCode: string, nextLanguage: SupportedLanguage) {
     updateLanguageState(nextLanguage);

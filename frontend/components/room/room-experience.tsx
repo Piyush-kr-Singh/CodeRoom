@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { accessRoom, ApiError, createRoom, deleteRoom, getRoomMetadata, updateRoomSettings } from "@/lib/api";
+import { emitActiveRoomOwner } from "@/lib/room-events";
 import { clearRoomSecrets, getOwnerToken, getViewerKey, setOwnerToken, setViewerKey } from "@/lib/storage";
 
 import { EditorShell } from "./editor-shell";
@@ -42,6 +43,20 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
     const viewerKey = getViewerKey(activeRoomSlug);
     setViewerLink(viewerKey ? `${window.location.origin}/room/${activeRoomSlug}?viewer=${viewerKey}` : "");
   }, [activeRoomSlug, session?.room.viewerKey]);
+
+  useEffect(() => {
+    emitActiveRoomOwner({
+      slug: activeRoomSlug,
+      isOwner: session?.accessLevel === "owner"
+    });
+
+    return () => {
+      emitActiveRoomOwner({
+        slug: activeRoomSlug,
+        isOwner: false
+      });
+    };
+  }, [activeRoomSlug, session?.accessLevel, slug]);
 
   async function hydrateRoom() {
     setBusy(true);
