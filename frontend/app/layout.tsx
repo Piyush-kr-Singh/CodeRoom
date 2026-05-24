@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import type { PropsWithChildren } from "react";
 
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
-import { siteConfig } from "@/lib/site";
+import { buildMetadata } from "@/lib/metadata";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 import "./globals.css";
 
@@ -20,26 +21,29 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600"]
 });
 
-export const metadata: Metadata = {
+const rootMetadata = buildMetadata({
   title: siteConfig.title,
   description: siteConfig.description,
+  path: "/"
+});
+
+export const metadata: Metadata = {
+  ...rootMetadata,
   metadataBase: new URL(siteConfig.domain),
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [{ url: "/brand/codesyncup-icon.svg", type: "image/svg+xml" }],
-    shortcut: ["/brand/codesyncup-icon.svg"]
-  },
-  openGraph: {
-    title: siteConfig.title,
-    description: siteConfig.description,
-    url: siteConfig.domain,
-    siteName: siteConfig.name,
-    type: "website"
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description
+    shortcut: ["/brand/codesyncup-icon.svg"],
+    apple: [{ url: "/brand/codesyncup-icon.svg" }]
   }
+};
+
+export const viewport: Viewport = {
+  colorScheme: "dark light",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: siteConfig.themeColor },
+    { media: "(prefers-color-scheme: light)", color: "#f4f7fb" }
+  ]
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
@@ -49,10 +53,43 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <StructuredData
           data={{
             "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: siteConfig.name,
-            url: siteConfig.domain,
-            description: siteConfig.description
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": `${siteConfig.domain}#organization`,
+                name: siteConfig.name,
+                url: siteConfig.domain,
+                email: siteConfig.contactEmail,
+                logo: absoluteUrl("/brand/codesyncup-logo.svg")
+              },
+              {
+                "@type": "WebSite",
+                "@id": `${siteConfig.domain}#website`,
+                name: siteConfig.name,
+                url: siteConfig.domain,
+                description: siteConfig.description,
+                publisher: {
+                  "@id": `${siteConfig.domain}#organization`
+                }
+              },
+              {
+                "@type": "SoftwareApplication",
+                "@id": `${siteConfig.domain}#application`,
+                name: siteConfig.name,
+                url: siteConfig.domain,
+                operatingSystem: "Web",
+                applicationCategory: "DeveloperApplication",
+                description: siteConfig.shortDescription,
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "USD"
+                },
+                publisher: {
+                  "@id": `${siteConfig.domain}#organization`
+                }
+              }
+            ]
           }}
         />
         <SiteHeader />

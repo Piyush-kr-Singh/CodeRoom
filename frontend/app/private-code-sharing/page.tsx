@@ -1,12 +1,20 @@
+import Link from "next/link";
+
 import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
-import { siteConfig } from "@/lib/site";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Private Code Share Online - Secure Coding Share | CodeSyncUp",
   description: "Securely share code and private text documents without registration. Protect your code rooms with password authentication and MongoDB TTL automatic room expiry.",
-  path: "/private-code-sharing"
+  path: "/private-code-sharing",
+  keywords: [
+    "private code share online",
+    "secure code sharing",
+    "password protected code room",
+    "temporary private code link"
+  ]
 });
 
 export default function PrivateCodeSharingPage() {
@@ -19,6 +27,7 @@ export default function PrivateCodeSharingPage() {
           "@type": "TechArticle",
           headline: "Private Code Sharing Without Login",
           description: "Create private code sharing rooms with passwords and automatic expiry.",
+          url: absoluteUrl("/private-code-sharing"),
           author: {
             "@type": "Organization",
             name: siteConfig.name
@@ -42,6 +51,14 @@ export default function PrivateCodeSharingPage() {
               {item}
             </div>
           ))}
+        </div>
+        <div className="mt-10 flex flex-wrap gap-3">
+          <Link href={siteConfig.roomLaunchPath} className="button-primary">
+            Start a private room
+          </Link>
+          <Link href="/features" className="button-secondary">
+            Review features
+          </Link>
         </div>
       </section>
     </>

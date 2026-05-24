@@ -5,7 +5,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Page Not Found | CodeSyncUp",
   description:
-    "The page you are looking for does not exist. Return home or start a live code-sharing room."
+    "The page you are looking for does not exist. Return home or start a live code-sharing room.",
+  robots: {
+    index: false,
+    follow: false
+  }
 };
 
 export default function NotFound() {

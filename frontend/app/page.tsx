@@ -9,7 +9,14 @@ import { faqItems, siteConfig } from "@/lib/site";
 export const metadata = buildMetadata({
   title: "Code Share Online - Anonymous Real-Time Coding Share & Text Sync | CodeSyncUp",
   description: "CodeSyncUp is the ultimate free online code share and text sync tool. Share code and text snippets instantly without login. Create private password-protected rooms with real-time Monaco-powered collaboration.",
-  path: "/"
+  path: "/",
+  keywords: [
+    "code share online",
+    "share code instantly",
+    "realtime coding share",
+    "anonymous code editor",
+    "private code rooms"
+  ]
 });
 
 const highlights = [
@@ -27,12 +34,20 @@ export default function HomePage() {
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: siteConfig.name,
+          url: siteConfig.domain,
+          description: siteConfig.shortDescription,
           applicationCategory: "DeveloperApplication",
           operatingSystem: "Web",
+          featureList: highlights,
+          isAccessibleForFree: true,
           offers: {
             "@type": "Offer",
             price: "0",
             priceCurrency: "USD"
+          },
+          publisher: {
+            "@type": "Organization",
+            name: siteConfig.name
           }
         }}
       />

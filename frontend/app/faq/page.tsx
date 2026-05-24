@@ -6,7 +6,12 @@ import { faqItems, siteConfig } from "@/lib/site";
 export const metadata = buildMetadata({
   title: "FAQ | Anonymous Real-Time Code Sharing",
   description: "Answers about private rooms, expiry controls, anonymous ownership, and secure no-login collaboration.",
-  path: "/faq"
+  path: "/faq",
+  keywords: [
+    "code sharing faq",
+    "private room faq",
+    "anonymous collaboration faq"
+  ]
 });
 
 export default function FaqPage() {

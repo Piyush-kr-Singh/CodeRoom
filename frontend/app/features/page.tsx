@@ -1,20 +1,37 @@
 import Link from "next/link";
 
 import { BreadcrumbData } from "@/components/seo/breadcrumb-data";
+import { StructuredData } from "@/components/seo/structured-data";
 import { SectionShell } from "@/components/section-shell";
 import { buildMetadata } from "@/lib/metadata";
-import { siteConfig } from "@/lib/site";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 export const metadata = buildMetadata({
   title: "Real-Time Code Sync & Coding Share Features | CodeSyncUp",
   description: "Discover modern coding share and text sync features built for anonymous rooms: live socket collaboration, password protection, customizable TTL expiry windows, and Monaco editor presences.",
-  path: "/features"
+  path: "/features",
+  keywords: [
+    "real-time code sync",
+    "code sharing features",
+    "monaco collaboration",
+    "expiring code rooms"
+  ]
 });
 
 export default function FeaturesPage() {
   return (
     <>
       <BreadcrumbData items={[{ name: "Features", path: "/features" }]} />
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "CodeSyncUp Features",
+          url: absoluteUrl("/features"),
+          description:
+            "Feature overview for anonymous code sharing, private rooms, live editing, and expiring collaboration links."
+        }}
+      />
       <section className="container-shell py-20">
         <p className="font-mono text-xs uppercase tracking-[0.32em] text-[color:var(--accent)]">Feature set</p>
         <h1 className="headline mt-4">Anonymous collaboration with practical controls</h1>
@@ -47,6 +64,23 @@ export default function FeaturesPage() {
         <div className="mt-10">
           <Link href={siteConfig.roomLaunchPath} className="button-primary">
             Try the live editor
+          </Link>
+        </div>
+      </SectionShell>
+      <SectionShell
+        eyebrow="Related pages"
+        title="Explore the strongest search intent pages"
+        description="These landing pages explain the privacy, editor, and workflow details that most teams compare before choosing a code-sharing tool."
+      >
+        <div className="flex flex-wrap gap-3">
+          <Link href="/private-code-sharing" className="button-secondary">
+            Private code sharing
+          </Link>
+          <Link href="/realtime-code-editor" className="button-secondary">
+            Realtime editor
+          </Link>
+          <Link href="/faq" className="button-secondary">
+            FAQ
           </Link>
         </div>
       </SectionShell>

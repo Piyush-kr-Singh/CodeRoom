@@ -1,9 +1,30 @@
-export const blogPosts = [
+export type BlogPost = {
+  slug: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  updatedAt: string;
+  keywords: string[];
+  sections: Array<{
+    heading: string;
+    paragraphs: string[];
+  }>;
+};
+
+export const blogPosts: readonly BlogPost[] = [
   {
     slug: "best-codeshare-alternatives",
     title: "Best Codeshare Alternatives for Fast Anonymous Pairing",
     description:
       "Compare the best Codeshare alternatives when you need instant rooms, password protection, and flexible expiry times.",
+    publishedAt: "2026-02-12T00:00:00.000Z",
+    updatedAt: "2026-05-24T00:00:00.000Z",
+    keywords: [
+      "codeshare alternatives",
+      "anonymous pair programming",
+      "online code sharing tools",
+      "private code collaboration"
+    ],
     sections: [
       {
         heading: "Why teams move away from legacy code sharing tools",
@@ -26,6 +47,14 @@ export const blogPosts = [
     title: "How to Share Code Online Instantly Without Signups",
     description:
       "A practical guide to sharing code online instantly, securely, and without asking teammates to create accounts first.",
+    publishedAt: "2026-03-05T00:00:00.000Z",
+    updatedAt: "2026-05-24T00:00:00.000Z",
+    keywords: [
+      "share code online instantly",
+      "share code without login",
+      "temporary code sharing",
+      "real-time code editor"
+    ],
     sections: [
       {
         heading: "Start with a room URL",
@@ -48,6 +77,14 @@ export const blogPosts = [
     title: "Secure Code Sharing Without Login: What Actually Matters",
     description:
       "Anonymous does not have to mean careless. Learn which controls make no-login code sharing safer in production.",
+    publishedAt: "2026-04-01T00:00:00.000Z",
+    updatedAt: "2026-05-24T00:00:00.000Z",
+    keywords: [
+      "secure code sharing",
+      "anonymous code sharing",
+      "private code rooms",
+      "temporary collaboration tools"
+    ],
     sections: [
       {
         heading: "Anonymous can still be secure",
