@@ -166,6 +166,15 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
     }
   }
 
+  function handleCloseCreateGate() {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push("/");
+  }
+
   async function handleSaveRoom(input: {
     visibility: "public" | "private";
     password?: string;
@@ -215,6 +224,7 @@ export function RoomExperience({ slug }: RoomExperienceProps) {
         busy={busy}
         error={error}
         defaultLanguage={defaultLanguage}
+        onCloseCreate={handleCloseCreateGate}
         onCreate={handleCreate}
         onPasswordAccess={handlePasswordAccess}
       />

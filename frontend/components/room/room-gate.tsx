@@ -16,6 +16,7 @@ type RoomGateProps = {
   busy: boolean;
   error: string;
   defaultLanguage: SupportedLanguage;
+  onCloseCreate: () => void;
   onCreate: (input: {
     visibility: "public" | "private";
     password?: string;
@@ -29,7 +30,16 @@ function getLanguageLabel(language: SupportedLanguage) {
   return language === "plaintext" ? "Plain text" : language;
 }
 
-export function RoomGate({ mode, slug, busy, error, defaultLanguage, onCreate, onPasswordAccess }: RoomGateProps) {
+export function RoomGate({
+  mode,
+  slug,
+  busy,
+  error,
+  defaultLanguage,
+  onCloseCreate,
+  onCreate,
+  onPasswordAccess
+}: RoomGateProps) {
   const isLauncherSlug = isReservedRoomSlug(slug);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
   const [password, setPassword] = useState("");
@@ -97,12 +107,19 @@ export function RoomGate({ mode, slug, busy, error, defaultLanguage, onCreate, o
           >
             {mode === "create" ? (
               <>
-                <p className="font-mono text-xs uppercase tracking-[0.28em] text-[color:var(--accent)]">
-                  Create room
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold">
-                  {isLauncherSlug ? "Configure a new room" : `Configure \`${slug}\``}
-                </h2>
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-mono text-xs uppercase tracking-[0.28em] text-[color:var(--accent)]">
+                      Create room
+                    </p>
+                    <h2 className="mt-3 text-2xl font-semibold">
+                      {isLauncherSlug ? "Configure a new room" : `Configure \`${slug}\``}
+                    </h2>
+                  </div>
+                  <button type="button" onClick={onCloseCreate} className="button-secondary px-4 py-2">
+                    Close
+                  </button>
+                </div>
                 <p className="body-copy mt-3">
                   {isLauncherSlug
                     ? "Choose privacy, expiry, and language first. We will generate a fresh shareable room URL when you continue."
