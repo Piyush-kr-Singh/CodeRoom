@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { LaunchRoomAction } from "@/components/launch-room-action";
-import { Reveal } from "@/components/reveal";
 import { SectionShell } from "@/components/section-shell";
 import { StructuredData } from "@/components/seo/structured-data";
 import { buildMetadata } from "@/lib/metadata";
@@ -53,7 +52,7 @@ export default function HomePage() {
         }}
       />
       <section className="container-shell grid gap-12 py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-28">
-        <Reveal className="max-w-3xl">
+        <div className="max-w-3xl">
           <p className="mb-5 font-mono text-xs uppercase tracking-[0.32em] text-[color:var(--accent)]">
             Anonymous by design
           </p>
@@ -76,8 +75,8 @@ export default function HomePage() {
               Explore features
             </Link>
           </div>
-        </Reveal>
-        <Reveal delay={0.12}>
+        </div>
+        <div>
           <div className="glass-panel rounded-[2rem] p-6 shadow-panel sm:p-8">
             <div className="rounded-[1.5rem] border border-white/10 bg-[rgba(6,12,19,0.76)] p-6">
               <div className="flex items-center justify-between">
@@ -98,7 +97,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-        </Reveal>
+        </div>
       </section>
 
       <SectionShell

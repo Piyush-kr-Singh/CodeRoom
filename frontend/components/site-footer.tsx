@@ -8,7 +8,13 @@ export function SiteFooter() {
     <footer className="border-t border-white/10 py-10">
       <div className="container-shell flex flex-col gap-8 text-sm text-[color:var(--muted)] md:flex-row md:justify-between">
         <div className="flex max-w-xs flex-col gap-3">
-          <img src="/brand/codesyncup-logo.svg" alt="CodeSyncUp" className="h-10 w-fit" />
+          <img
+            src="/brand/codesyncup-logo.svg"
+            alt="CodeSyncUp"
+            width="320"
+            height="88"
+            className="h-10 w-auto"
+          />
           <p>Anonymous code sharing with password protection, expiry controls, and real-time collaboration.</p>
         </div>
         <div className="flex flex-wrap gap-12">
