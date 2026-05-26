@@ -64,6 +64,9 @@ npm run dev:frontend
 - `ROOM_MAX_USERS`: per-room cap for abuse protection
 - `ROOM_INACTIVITY_MINUTES`: inactivity timeout before cleanup
 - `ROOM_MAX_EXPIRY_HOURS`: upper bound for room lifetime
+- `ADMIN_ROUTE_PATH`: backend-only read-only admin dashboard path
+- `ADMIN_USERNAME`: HTTP Basic Auth username for the admin dashboard
+- `ADMIN_PASSWORD`: HTTP Basic Auth password for the admin dashboard
 
 ### Frontend
 
@@ -90,6 +93,9 @@ npm run dev:frontend
    - `MONGODB_URI`
    - `JWT_SECRET`
    - `CLIENT_URL=https://your-frontend.example.com`
+   - `ADMIN_ROUTE_PATH=/your-secret-admin-path`
+   - `ADMIN_USERNAME`
+   - `ADMIN_PASSWORD`
    - `REDIS_URL` if you want multi-instance socket scaling
 5. Enable sticky sessions if your platform requires them for websockets.
 
@@ -110,6 +116,7 @@ If you prefer to keep the service root at the repo root, use:
 - Private room passwords are hashed with bcrypt
 - Owner tokens and viewer keys are stored hashed on the backend
 - Express rate limiting protects room creation and access attempts
+- The admin dashboard is backend-hosted, read-only, and protected with HTTP Basic Auth on every request
 - Room size is capped server-side
 - Hard expiry and inactivity cleanup reduce retained data
 

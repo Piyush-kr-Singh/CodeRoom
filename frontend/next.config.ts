@@ -28,6 +28,18 @@ const nextConfig: NextConfig = {
         ]
       }
     ];
+  },
+  async rewrites() {
+    const adminPath = process.env.ADMIN_ROUTE_PATH || "/admin";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const sourcePath = adminPath.startsWith("/") ? adminPath : `/${adminPath}`;
+
+    return [
+      {
+        source: sourcePath,
+        destination: `${apiUrl}${sourcePath}`
+      }
+    ];
   }
 };
 

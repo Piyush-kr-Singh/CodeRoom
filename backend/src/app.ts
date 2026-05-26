@@ -4,14 +4,19 @@ import helmet from "helmet";
 import mongoose from "mongoose";
 import morgan from "morgan";
 
-import { env } from "./config/env.js";
+import { env, isAdminConfigured } from "./config/env.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { globalLimiter } from "./middleware/rate-limit.js";
+import { createAdminRouter } from "./routes/admin.routes.js";
 import { createRoomRouter } from "./routes/room.routes.js";
 import { createContactRouter } from "./routes/contact.routes.js";
+import { AdminService, type AdminDashboardReader } from "./services/admin.service.js";
 import { RoomService } from "./services/room.service.js";
 
-export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
+export function buildApp(
+  roomService = new RoomService(env.CLIENT_URL),
+  adminService: AdminDashboardReader = new AdminService()
+) {
   const app = express();
 
   app.set("trust proxy", 1);
@@ -52,6 +57,10 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
     });
   });
 
+  if (isAdminConfigured) {
+    app.use(env.ADMIN_ROUTE_PATH, createAdminRouter(adminService));
+  }
+
   app.use("/api/rooms", createRoomRouter(roomService));
   app.use("/api/contact", createContactRouter());
   app.use((_request: Request, response: Response) => {
@@ -63,4 +72,3 @@ export function buildApp(roomService = new RoomService(env.CLIENT_URL)) {
 
   return app;
 }
-

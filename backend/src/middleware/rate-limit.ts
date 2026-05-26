@@ -39,3 +39,13 @@ export const contactFormLimiter = rateLimit({
   }
 });
 
+export const adminAccessLimiter = rateLimit({
+  windowMs: env.ADMIN_AUTH_LIMIT_WINDOW_MINUTES * 60 * 1000,
+  limit: env.ADMIN_AUTH_LIMIT_MAX,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: {
+    message: "Too many admin access attempts from this IP. Please try again later."
+  }
+});
